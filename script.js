@@ -126,20 +126,21 @@ function writeMultilineText(doc, text, x, y, maxWidth = 180, lineHeight = 7) {
   return y;
 }
 
+import { saveDraft } from './firebase.js';
+
 function saveToJSON() {
-  const data = [];
   const blocks = document.querySelectorAll('.qa-block');
+  const data = [];
+
   blocks.forEach(block => {
     data.push({
-      asker: block.querySelector('.asker')?.value || '',
-      time: block.querySelector('.time')?.innerText || '',
-      question: block.querySelector('.question')?.value || '',
-      answer: block.querySelector('.answer')?.value || ''
+      "Người hỏi": block.querySelector('.asker')?.value || '',
+      "Thời gian": block.querySelector('.time')?.innerText || '',
+      "Câu hỏi": block.querySelector('.question')?.value || '',
+      "Câu trả lời": block.querySelector('.answer')?.value || '',
+      "Hình ảnh": block.querySelector('.preview')?.src || ''
     });
   });
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "QA.json";
-  link.click();
+
+  saveDraft({ createdAt: new Date().toISOString(), content: data });
 }
