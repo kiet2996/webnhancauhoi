@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Trang lưu câu hỏi và câu trả lời</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <h2>Chào mừng đến với bài thuyết trình về "Ô nhiễm môi trường"</h2>
+  <input type="file" id="pdfUpload" accept=".pdf">
+  <iframe id="pdfViewer"></iframe>
+
+  <h2>Danh sách câu hỏi & trả lời</h2>
+  <div id="qaContainer"></div>
+
+  <button onclick="addQA()">➕ Thêm khung câu hỏi</button>
+  <button onclick="exportToWord()">📝 Xuất Word</button>
+  <button onclick="exportToPDF()">📄 Xuất PDF</button>
+  <button onclick="saveToJSON()">💾 Lưu bản nháp</button>
+
+  <footer style="margin-top: 60px; text-align: center; font-size: 14px; color: #94a3b8;">
+    © 2025 Bản quyền thuộc về <strong>Nguyễn Thế Kiệt</strong>
+  </footer>
+
+  <!-- Thư viện -->
+  <script src="dlkt/times-normal.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html-docx-js/0.4.0/html-docx.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  
+  <!-- Mã JavaScript -->
+  <script src="script.js"></script>
+</body>
+</html>
