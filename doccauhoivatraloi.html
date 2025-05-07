@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Trang lưu câu hỏi và câu trả lời</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <style>
+ /* ===== TOÀN CỤC ===== */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'San Francisco', 'Roboto', sans-serif;
+  margin: 40px;
+  background-color: #f5f7fa;
+  color: #2c3e50;
+  line-height: 1.6;
+}
+
+/* ===== TIÊU ĐỀ ===== */
+h2 {
+  color: #1e293b;
+  margin-bottom: 24px;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+/* ===== PDF VIEWER ===== */
+#pdfViewer {
+  width: 100%;
+  max-width: 800px;
+  height: 520px;
+  border: none;
+  border-radius: 18px;
+  margin-bottom: 30px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* ===== KHỐI CÂU HỎI ===== */
+.qa-block {
+  background: #ffffff;
+  border: none;
+  padding: 28px;
+  margin-bottom: 36px;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.qa-block:hover {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+  transform: translateY(-3px);
+}
+
+/* ===== NHÃN ===== */
+.qa-block label {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #1f2937;
+}
+
+/* ===== INPUT + TEXTAREA ===== */
+.qa-block textarea,
+.qa-block input[type="text"] {
+  width: 100%;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  border: 1px solid #d1d5db;
+  border-radius: 14px;
+  font-size: 15px;
+  background-color: #f9fafb;
+  transition: all 0.3s ease;
+}
+
+.qa-block textarea,
+.qa-block input[type="text"] {
+  width: 100%;
+  box-sizing: border-box;
+  resize: none;
+  min-height: 40px;
+  overflow: hidden;
+}
+/* ===== HÌNH ẢNH ===== */
+.qa-block img {
+  max-width: 240px;
+  margin-top: 16px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* ===== NÚT ===== */
+button {
+  padding: 14px 24px;
+  margin-top: 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #4f46e5, #3b82f6);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 6px 16px rgba(59,130,246,0.3);
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  opacity: 0.95;
+  transform: translateY(-2px);
+}
+
+
+
+  </style>
+</head>
+<body>
+
+<h2>Chào mừng đến với bài thuyết trình về" Ô nhiễm môi trường "</h2>
+<input type="file" id="pdfUpload" accept=".pdf">
+<iframe id="pdfViewer"></iframe>
+
+<h2>Danh sách câu hỏi & trả lời</h2>
+<div id="qaContainer"></div>
+
+<button onclick="addQA()">➕ Thêm khung câu hỏi</button>
+<button onclick="exportToWord()">📝 Xuất Word</button>
+<button onclick="exportToPDF()">📄 Xuất PDF</button>
+<button onclick="saveToJSON()">💾 Lưu bản nháp</button>
+
+<footer style="margin-top: 60px; text-align: center; font-size: 14px; color: #94a3b8;">
+  © 2025 Bản quyền thuộc về <strong>Nguyễn Thế Kiệt</strong>
+</footer>
+
+<script src="dlkt/times-normal.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html-docx-js/0.4.0/html-docx.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+document.getElementById('pdfUpload').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  const url = URL.createObjectURL(file);
+  document.getElementById('pdfViewer').src = url;
+});
+function addQA() {
+  const now = new Date().toLocaleString();
+  const container = document.getElementById('qaContainer');
+
+  const block = document.createElement('div');
+  block.className = 'qa-block';
+ block.innerHTML = `
+  <label>Người hỏi: <input type="text" class="asker" /></label><br><br>
+  <strong>Thời gian:</strong> <span class="time">${now}</span><br><br>
+  <label>Câu hỏi:<br>
+    <textarea class="question" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+  </label><br><br>
+  <label>Trả lời:<br>
+    <textarea class="answer" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+  </label><br><br>
+  <label>Chèn ảnh: <input type="file" accept="image/*" class="imgInput" /></label><br>
+  <img class="preview" />
+`;
+
+  container.appendChild(block);
+
+  const imgInput = block.querySelector('.imgInput');
+  const preview = block.querySelector('.preview');
+  imgInput.addEventListener('change', function () {
+    const file = this.files[0];
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      preview.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function exportToWord() {
+  const blocks = document.querySelectorAll('.qa-block');
+  let html = "<h2>Danh sách câu hỏi & trả lời</h2>";
+
+  blocks.forEach((block, index) => {
+    const asker = block.querySelector('.asker')?.value || '';
+    const time = block.querySelector('.time')?.innerText || '';
+    const question = block.querySelector('.question')?.value || '';
+    const answer = block.querySelector('.answer')?.value || '';
+    const img = block.querySelector('.preview');
+
+    html += `
+      <div>
+        <p><strong>Người hỏi:</strong> ${asker}</p>
+        <p><strong>Thời gian:</strong> ${time}</p>
+        <p><strong>Câu hỏi:</strong><br>${question.replace(/\n/g, "<br>")}</p>
+        <p><strong>Trả lời:</strong><br>${answer.replace(/\n/g, "<br>")}</p>
+    `;
+
+    if (img && img.src && img.src.startsWith('data:image')) {
+      html += `<p><img src="${img.src}" style="max-width:200px;" /></p>`;
+    }
+
+    html += `</div><hr>`;
+  });
+
+  const content = `
+    <!DOCTYPE html>
+    <html>
+    <head><meta charset='utf-8'></head>
+    <body>${html}</body>
+    </html>`;
+
+  const blob = window.htmlDocx.asBlob(content);
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'QA.docx';
+  link.click();
+}
+
+async function exportToPDF() {
+  const { jsPDF } = window.jspdf;
+const doc = new jsPDF();
+doc.addFileToVFS("times-normal.js", timenormal); // từ file .js sinh ra
+doc.addFont("times.ttf", "times");
+doc.setFont("times");
+
+  let y = 10;
+
+  const blocks = document.querySelectorAll('.qa-block');
+  for (let i = 0; i < blocks.length; i++) {
+    const block = blocks[i];
+    const asker = block.querySelector('.asker')?.value || '';
+    const time = block.querySelector('.time')?.innerText || '';
+    const question = block.querySelector('.question')?.value || '';
+    const answer = block.querySelector('.answer')?.value || '';
+    const img = block.querySelector('.preview');
+
+    doc.setFont("Helvetica", ""); // font hỗ trợ cơ bản tiếng Việt
+    doc.setFontSize(12);
+
+    // Tách nội dung để xuống dòng nếu dài
+    y = writeMultilineText(doc, `Người hỏi: ${asker}`, 10, y);
+    y = writeMultilineText(doc, `Thời gian: ${time}`, 10, y);
+    y = writeMultilineText(doc, `Câu hỏi: ${question}`, 10, y);
+    y = writeMultilineText(doc, `Trả lời: ${answer}`, 10, y);
+
+    // Nếu có ảnh
+    if (img && img.src && img.src.startsWith('data:image')) {
+      const imgProps = doc.getImageProperties(img);
+      const ratio = imgProps.width / imgProps.height;
+      const imgWidth = 60;
+      const imgHeight = imgWidth / ratio;
+
+      if (y + imgHeight > 280) {
+        doc.addPage();
+        y = 10;
+      }
+
+      doc.addImage(img.src, 'JPEG', 10, y, imgWidth, imgHeight);
+      y += imgHeight + 10;
+    } else {
+      y += 10;
+    }
+
+    if (y > 270 && i < blocks.length - 1) {
+      doc.addPage();
+      y = 10;
+    }
+  }
+
+  doc.save('QA.pdf');
+}
+
+// Hàm hỗ trợ viết xuống dòng tự động
+function writeMultilineText(doc, text, x, y, maxWidth = 180, lineHeight = 7) {
+  const lines = doc.splitTextToSize(text, maxWidth);
+  lines.forEach(line => {
+    doc.text(line, x, y);
+    y += lineHeight;
+  });
+  return y;
+}
+function saveToJSON() {
+  const blocks = document.querySelectorAll('.qa-block');
+  const data = [];
+
+  blocks.forEach(block => {
+    data.push({
+      "Người hỏi": block.querySelector('.asker')?.value || '',
+      "Thời gian": block.querySelector('.time')?.innerText || '',
+      "Câu hỏi": block.querySelector('.question')?.value || '',
+      "Câu trả lời": block.querySelector('.answer')?.value || '',
+      "Hình ảnh": block.querySelector('.preview')?.src || ''
+    });
+  });
+
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'QA-data.json';
+  link.click();
+}
+
+</script>
+
+</body>
+</html>
